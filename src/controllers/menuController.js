@@ -14,7 +14,7 @@ const getMenu = async (req, res, menuCollection) => {
 const getPopularMenu = async (req, res, menuCollection) => {
     try {
         // Searching Biryani Items
-        const query = { category: 'Biryani' }; 
+        const query = { category: { $in: ['Biryani', 'biryani', 'Fish', 'fish'] } }; 
         const result = await menuCollection.find(query).toArray();
         res.send(result);
     } catch (error) {

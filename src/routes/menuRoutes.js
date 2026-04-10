@@ -18,6 +18,7 @@ const menuRoutes = (db) => {
 
     // Popular / Biryani Menu
     router.get('/popular', (req, res) => getPopularMenu(req, res, menuCollection));
+    
 
     // Dynamic Category
     router.get('/:category', (req, res) => getMenuByCategory(req, res, menuCollection));
