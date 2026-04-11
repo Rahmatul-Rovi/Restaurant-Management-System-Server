@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./src/config/db');
 const menuRoutes = require('./src/routes/menuRoutes');
+const cartRoutes = require('./src/routes/cartRoutes');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -16,7 +17,11 @@ async function startServer() {
 
     if (db) {
         // Routes Setup
+        //MenuRoutes
         app.use('/menu', menuRoutes(db));
+        //CartRoutes
+       // app.use('/cart', cartRoutes(db));
+       cartRoutes(app,db);
 
         app.get('/', (req, res) => {
             res.send('TastyTwists Server is Running Modularly..');
