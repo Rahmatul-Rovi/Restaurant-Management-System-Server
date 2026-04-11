@@ -1,4 +1,4 @@
-
+ const {ObjectId} = require('mongodb');
 const addToCart = async (req,res,cartCollection) => {
   try{
     const cartItem = req.body;
@@ -16,7 +16,7 @@ const getCartByEmail = async (req, res, cartCollection) => {
     try{
       const email = req.query.email;
       const query = {email: email};
-      const result = await cartCollection.findOne(query).toArray();
+      const result = await cartCollection.find(query).toArray();
       res.send(result);
     }
     catch(error){
@@ -28,8 +28,8 @@ const getCartByEmail = async (req, res, cartCollection) => {
 const deleteCartItem = async (req, res, cartCollection) => {
   try{
   const id = req.params.id;
-    const {ObjectId} = require('mongodb');
-    const query = {_id: newObjectId(id)};
+   
+    const query = {_id: new ObjectId(id)};
     const result = await cartCollection.deleteOne(query);
     res.send(result);
   }
