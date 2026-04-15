@@ -31,4 +31,16 @@ const saveUser = async (req, res) => {
         }
      };
 
-     module.exports = { saveUser, getAllUsers };
+     const makeAdmin = async(req,res)=> {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)};
+        const updateDoc = {
+            $set: {
+                role: 'admin'
+            },
+        };
+        const result = await userCollection.updateDoc(filter,updateDoc);
+        res.send(result);
+     } 
+
+     module.exports = { saveUser, getAllUsers, makeAdmin };
