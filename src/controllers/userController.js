@@ -26,7 +26,9 @@ const saveUser = async (req, res) => {
             const result = await db.collection('users').find().toArray();
             res.send(result);
         }
-        
+        catch(error){
+            res.status(500).send({message:error.message})
+        }
      };
 
-     module.exports = { saveUser };
+     module.exports = { saveUser, getAllUsers };
