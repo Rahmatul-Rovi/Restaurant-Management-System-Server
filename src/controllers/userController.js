@@ -20,4 +20,13 @@ const saveUser = async (req, res) => {
     }
      };
 
+     const getAllUsers = async(req,res) => {
+        try{
+            const db = getDb;
+            const result = await db.collection('users').find().toArray();
+            res.send(result);
+        }
+        
+     };
+
      module.exports = { saveUser };
