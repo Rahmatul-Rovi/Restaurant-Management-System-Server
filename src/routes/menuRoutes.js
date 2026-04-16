@@ -11,7 +11,7 @@ const menuRoutes = (db) => {
     const menuCollection = db.collection("menu");
 
     //Add new Item
-    router.post('/', (req,res)=>  addMenuItem(menuCollection));
+    router.post('/', (req,res)=>  addMenuItem(req,res, menuCollection));
 
     // for search route
     router.get('/search', (req, res) => searchMenu(req, res, menuCollection));
@@ -25,6 +25,8 @@ const menuRoutes = (db) => {
 
     // Dynamic Category
     router.get('/:category', (req, res) => getMenuByCategory(req, res, menuCollection));
+
+    router.delete('/:id', (req, res)=> deleteMenuItem(req,res, menuCollection));
 
     return router;
 };
