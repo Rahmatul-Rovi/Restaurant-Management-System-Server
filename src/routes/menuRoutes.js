@@ -10,6 +10,9 @@ const {
 const menuRoutes = (db) => {
     const menuCollection = db.collection("menu");
 
+    //Add new Item
+    router.post('/', (req,res)=>  addMenuItem(menuCollection));
+
     // for search route
     router.get('/search', (req, res) => searchMenu(req, res, menuCollection));
 

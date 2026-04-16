@@ -49,9 +49,23 @@ const searchMenu = async (req, res, menuCollection) => {
     }
 };
 
+const addMenuItem = async(req, res) => {
+    try{
+        const db = getDb();
+        const menuCollection = db.collection('menu');
+        const newItem = req.body;
+        const result = await menuCollection.insertOne(newItem);
+        res.send(result);
+    }
+    catch (error){
+       res.status(500).send({message:error.message});
+    }
+};
+
 module.exports = { 
     getMenu, 
     getPopularMenu, 
     getMenuByCategory, 
-    searchMenu 
+    searchMenu ,
+    addMenuItem
 };
