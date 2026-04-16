@@ -19,7 +19,7 @@ async function startServer() {
     if (db) {
         // Routes Setup
         //MenuRoutes
-        app.use('/menu', menuRoutes(db));
+        app.use('/menu', menuRoutes());
         //CartRoutes
        // app.use('/cart', cartRoutes(db));
        cartRoutes(app,db);

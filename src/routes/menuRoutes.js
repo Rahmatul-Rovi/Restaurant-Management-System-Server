@@ -1,32 +1,35 @@
 const express = require('express');
-const router = express.Router();
+
 const { 
     getMenu, 
     getPopularMenu, 
     getMenuByCategory, 
-    searchMenu 
+    searchMenu,
+    deleteMenuItem,
+    addMenuItem 
 } = require('../controllers/menuController');
 
-const menuRoutes = (db) => {
-    const menuCollection = db.collection("menu");
+const menuRoutes = () => {
 
-    //Add new Item
-    router.post('/', (req,res)=>  addMenuItem(req,res, menuCollection));
+    const router = express.Router(); // ✅ ভিতরে নিতে হবে
 
-    // for search route
-    router.get('/search', (req, res) => searchMenu(req, res, menuCollection));
+    // ✅ Add Item
+    router.post('/', addMenuItem);
 
-    // All Menu
-    router.get('/', (req, res) => getMenu(req, res, menuCollection));
+    // ✅ Search আগে রাখতে হবে
+    router.get('/search', searchMenu);
 
-    // Popular / Biryani Menu
-    router.get('/popular', (req, res) => getPopularMenu(req, res, menuCollection));
-    
+    // ✅ Popular route
+    router.get('/popular', getPopularMenu);
 
-    // Dynamic Category
-    router.get('/:category', (req, res) => getMenuByCategory(req, res, menuCollection));
+    // ✅ All menu
+    router.get('/', getMenu);
 
-    router.delete('/:id', (req, res)=> deleteMenuItem(req,res, menuCollection));
+    // ✅ Delete
+    router.delete('/:id', deleteMenuItem);
+
+    // ⚠️ Dynamic route সবশেষে
+    router.get('/:category', getMenuByCategory);
 
     return router;
 };
