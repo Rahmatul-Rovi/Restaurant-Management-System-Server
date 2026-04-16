@@ -153,11 +153,45 @@ const deleteMenuItem = async (req, res) => {
     }
 };
 
+// ৭. UPDATE ITEM
+const updateMenuItem = async (req, res) => {
+    try {
+        const db = getDb();
+        if (!db) return res.status(500).json({ message: "Database not connected" });
+
+        const menuCollection = db.collection('menu');
+
+        const id = req.params.id;
+
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid ID" });
+        }
+
+        const updatedData = req.body;
+
+        const result = await menuCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: updatedData }
+        );
+
+        res.json({
+            success: true,
+            message: "Item updated successfully",
+            data: result
+        });
+
+    } catch (error) {
+        console.error("UPDATE ERROR:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
 module.exports = {
     getMenu,
     getPopularMenu,
     getMenuByCategory,
     searchMenu,
     addMenuItem,
-    deleteMenuItem
+    deleteMenuItem,
+    updateMenuItem
 };

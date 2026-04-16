@@ -6,7 +6,8 @@ const {
     getMenuByCategory, 
     searchMenu,
     deleteMenuItem,
-    addMenuItem 
+    addMenuItem, 
+    updateMenuItem
 } = require('../controllers/menuController');
 
 const menuRoutes = () => {
@@ -27,6 +28,8 @@ const menuRoutes = () => {
 
     // ✅ Delete
     router.delete('/:id', deleteMenuItem);
+
+    router.patch('/:id', updateMenuItem);
 
     // ⚠️ Dynamic route সবশেষে
     router.get('/:category', getMenuByCategory);
