@@ -62,10 +62,29 @@ const addMenuItem = async(req, res) => {
     }
 };
 
+
+const { ObjectId } = require('mongodb');
+
+const deleteMenuItem = async (req, res) => {
+    try {
+        const db = getDb();
+        const menuCollection = db.collection('menu');
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await menuCollection.deleteOne(query);
+        res.send(result);
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
+
+
+
 module.exports = { 
     getMenu, 
     getPopularMenu, 
     getMenuByCategory, 
     searchMenu ,
-    addMenuItem
+    addMenuItem,
+    deleteMenuItem
 };
