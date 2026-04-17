@@ -46,4 +46,16 @@ const saveUser = async (req, res) => {
         res.send(result);
      } 
 
-     module.exports = { saveUser, getAllUsers, makeAdmin };
+     const deleteUser = async (req, res) => {
+    try {
+        const db = getDb();
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await db.collection('users').deleteOne(query);
+        res.send(result);
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
+
+     module.exports = { saveUser, getAllUsers, makeAdmin, deleteUser };
