@@ -100,4 +100,28 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { saveUser, getAllUsers, makeAdmin, deleteUser };
+// Get user with email
+const getUserByEmail = async (req, res) => {
+    try {
+        const db = getDb();
+        const email = req.params.email;
+
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" });
+        }
+
+        const user = await db.collection('users').findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.send(user);
+
+    } catch (error) {
+        console.error("GET USER ERROR:", error);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+module.exports = { saveUser, getAllUsers, makeAdmin, deleteUser, getUserByEmail };
