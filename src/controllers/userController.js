@@ -124,4 +124,29 @@ const getUserByEmail = async (req, res) => {
     }
 };
 
-module.exports = { saveUser, getAllUsers, makeAdmin, deleteUser, getUserByEmail };
+const updateUserProfile = async (req, res) => {
+    try {
+        const db = getDb();
+        const email = req.params.email; // ইমেইল দিয়ে ইউজার খুঁজে আপডেট করবো
+        const { name, phone, photoURL } = req.body; // ফ্রন্টএন্ড থেকে যা যা পাঠাবে
+
+        const filter = { email: email };
+        const updateDoc = {
+            $set: {
+                name: name,
+                phone: phone,
+                photoURL: photoURL // ইমেজ আপডেট হওয়ার মূল জায়গা
+            },
+        };
+
+        const result = await db.collection('users').updateOne(filter, updateDoc);
+        res.send(result);
+    } catch (error) {
+        console.error("UPDATE ERROR:", error);
+        res.status(500).send({ message: "Update failed", error: error.message });
+    }
+};
+
+
+
+module.exports = { saveUser, getAllUsers, makeAdmin, deleteUser, getUserByEmail, updateUserProfile };
