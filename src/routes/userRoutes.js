@@ -7,12 +7,16 @@ router.post('/', saveUser);
 
 router.get('/', getAllUsers);
 
-router.get('/:email', getUserByEmail)
+
 
 router.patch('/admin/:id', makeAdmin);
 
+router.patch('/update/:email', updateUserProfile);
+
 router.delete('/:id', deleteUser);
 
-router.patch('/update/:email', updateUserProfile);
+
+
+router.get('/:email', getUserByEmail)
 
 module.exports = router;
