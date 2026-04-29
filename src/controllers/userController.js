@@ -1,39 +1,39 @@
 const { getDb } = require('../config/db');
 const { ObjectId } = require('mongodb');
 
-// ১. নতুন ইউজার ডাটাবেজে সেভ করা
+// ১. নতুন ইউজার সেভ করা
 const saveUser = async (req, res) => {
     try {
         const db = getDb();
         if (!db) {
             return res.status(500).json({ message: "Database connection not established" });
         }
-        
+
         const userCollection = db.collection('users');
         const user = req.body;
 
-        // চেক করা হচ্ছে ইমেইল আছে কি না (ইমেইল ছাড়া সেভ করা যাবে না)
         if (!user.email) {
             return res.status(400).json({ message: "Email is required" });
         }
 
-        // চেক করা হচ্ছে ইউজার আগে থেকে ডাটাবেজে আছে কি না
         const query = { email: user.email };
         const existingUser = await userCollection.findOne(query);
 
         if (existingUser) {
+            // ✅ Already exists হলেও photoURL update করো (Google pic sync)
+            await userCollection.updateOne(query, {
+                $set: {
+                    photoURL: user.photoURL || user.image || existingUser.photoURL || ""
+                }
+            });
             return res.send({ message: 'User already exists', insertedId: null });
         }
 
-        /**
-         * সমাধান: এখানে আমরা ম্যানুয়ালি রোল সেট করছি।
-         * নতুন ইউজার সেভ হওয়ার সময় সবসময় 'user' রোল পাবে।
-         */
         const newUser = {
             name: user.name,
             email: user.email,
-            photoURL: user.photoURL || user.image || "",
-            role: 'user', // ডিফল্ট রোল সবসময় 'user'
+            photoURL: user.photoURL || user.image || "", // ✅ Google photoURL
+            role: 'user',
             createdAt: new Date()
         };
 
@@ -46,7 +46,7 @@ const saveUser = async (req, res) => {
     }
 };
 
-// ২. সব ইউজারদের লিস্ট দেখা
+// ২. সব ইউজার দেখা
 const getAllUsers = async (req, res) => {
     try {
         const db = getDb();
@@ -57,7 +57,7 @@ const getAllUsers = async (req, res) => {
     }
 };
 
-// ৩. ইউজারকে অ্যাডমিন বানানো
+// ৩. Admin বানানো
 const makeAdmin = async (req, res) => {
     try {
         const db = getDb();
@@ -69,11 +69,7 @@ const makeAdmin = async (req, res) => {
         }
 
         const filter = { _id: new ObjectId(id) };
-        const updateDoc = {
-            $set: {
-                role: 'admin' // শুধু এই ফাংশনটি কল করলেই কেউ অ্যাডমিন হবে
-            },
-        };
+        const updateDoc = { $set: { role: 'admin' } };
 
         const result = await userCollection.updateOne(filter, updateDoc);
         res.send(result);
@@ -82,7 +78,7 @@ const makeAdmin = async (req, res) => {
     }
 };
 
-// ৪. ইউজার ডিলিট করা
+// ৪. ইউজার ডিলিট
 const deleteUser = async (req, res) => {
     try {
         const db = getDb();
@@ -100,7 +96,7 @@ const deleteUser = async (req, res) => {
     }
 };
 
-// Get user with email
+// ৫. Email দিয়ে ইউজার খোঁজা
 const getUserByEmail = async (req, res) => {
     try {
         const db = getDb();
@@ -117,36 +113,39 @@ const getUserByEmail = async (req, res) => {
         }
 
         res.send(user);
-
     } catch (error) {
         console.error("GET USER ERROR:", error);
         res.status(500).send({ message: error.message });
     }
 };
 
+// ৬. Profile Update
 const updateUserProfile = async (req, res) => {
     try {
         const db = getDb();
-        const email = req.params.email; // ইমেইল দিয়ে ইউজার খুঁজে আপডেট করবো
-        const { name, phone, photoURL } = req.body; // ফ্রন্টএন্ড থেকে যা যা পাঠাবে
+        const email = req.params.email;
+        const { name, phone, photoURL } = req.body;
 
         const filter = { email: email };
-        const updateDoc = {
-            $set: {
-                name: name,
-                phone: phone,
-                photoURL: photoURL // ইমেজ আপডেট হওয়ার মূল জায়গা
-            },
-        };
+
+        const updatedData = {};
+        if (name) updatedData.name = name;
+        if (phone) updatedData.phone = phone;
+        if (photoURL) updatedData.photoURL = photoURL;
+
+        const updateDoc = { $set: updatedData };
 
         const result = await db.collection('users').updateOne(filter, updateDoc);
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ message: "User not found in database" });
+        }
+
         res.send(result);
     } catch (error) {
         console.error("UPDATE ERROR:", error);
         res.status(500).send({ message: "Update failed", error: error.message });
     }
 };
-
-
 
 module.exports = { saveUser, getAllUsers, makeAdmin, deleteUser, getUserByEmail, updateUserProfile };

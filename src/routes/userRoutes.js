@@ -13,6 +13,6 @@ router.patch('/admin/:id', makeAdmin);
 
 router.delete('/:id', deleteUser);
 
-router.patch('/users/update/:email', updateUserProfile);
+router.patch('/update/:email', updateUserProfile);
 
 module.exports = router;
