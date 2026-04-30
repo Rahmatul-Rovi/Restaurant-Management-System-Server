@@ -1,14 +1,17 @@
 const SSLCommerzPayment = require('sslcommerz-lts');
 const { ObjectId } = require('mongodb');
+const connectDB = require('../config/db'); // আপনার db ফাইলটি রিকয়ার করে নিলাম
 
-// SSLCommerz Credentials (আপাতত টেস্টের জন্য এগুলোই থাক)
-const store_id = 'testbox'; 
-const store_passwd = 'qwerty'; 
+const store_id = process.env.STORE_ID; 
+const store_passwd = process.env.STORE_PASS; 
 const is_live = false; 
 
 const initiatePayment = async (req, res) => {
+    const db = await connectDB(); // ডাটাবেজ কানেকশন নিলাম
+    const orderCollection = db.collection('orders'); // 'orders' নামে কালেকশন ধরলাম
+    
     const order = req.body;
-    const tran_id = new ObjectId().toString(); // ইউনিক ট্রানজ্যাকশন আইডি
+    const tran_id = new ObjectId().toString(); 
 
     const data = {
         total_amount: order.totalAmount,
@@ -36,17 +39,35 @@ const initiatePayment = async (req, res) => {
     
     try {
         const apiResponse = await sslcz.init(data);
-        // এখান থেকে পেমেন্ট গেটওয়ে লিঙ্ক ফ্রন্টএন্ডে পাঠাচ্ছি
+        
+        // --- ডাটাবেজে অর্ডারটি পেন্ডিং হিসেবে সেভ করা ---
+        const finalOrder = {
+            ...order,
+            transactionId: tran_id,
+            paidStatus: false,
+            createdAt: new Date()
+        };
+        await orderCollection.insertOne(finalOrder);
+
         res.send({ url: apiResponse.GatewayPageURL });
     } catch (error) {
+        console.error("SSL Error:", error);
         res.status(500).send({ message: "Payment Initiation Failed" });
     }
 };
 
 const paymentSuccess = async (req, res) => {
     const { tranId } = req.params;
-    // এখানে তুমি ডাটাবেজে অর্ডারের স্ট্যাটাস 'Paid' আপডেট করবে
-    // আপডেট করার পর ইউজারকে ফ্রন্টএন্ডের সাকসেস পেজে রিডাইরেক্ট করবে
+    const db = await connectDB();
+    const orderCollection = db.collection('orders');
+
+    // ডাটাবেজে paidStatus আপডেট করা
+    const result = await orderCollection.updateOne(
+        { transactionId: tranId },
+        { $set: { paidStatus: true } }
+    );
+
+    // পেমেন্ট সাকসেস হলে ফ্রন্টএন্ডে রিডাইরেক্ট (এখানে ফ্রন্টএন্ডে সাকসেস পেজ থাকতে হবে)
     res.redirect(`http://localhost:5173/dashboard/payment/success/${tranId}`);
 };
 
