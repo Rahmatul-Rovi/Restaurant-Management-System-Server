@@ -4,6 +4,7 @@ const connectDB = require('./src/config/db');
 const menuRoutes = require('./src/routes/menuRoutes');
 const cartRoutes = require('./src/routes/cartRoutes');
 const userRoutes = require('./src/routes/userRoutes');
+const paymentRoutes = require('./src/routes/paymentRoutes');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -29,6 +30,8 @@ async function startServer() {
         });
 
         app.use('/users', userRoutes);
+
+        app.use('/api', paymentRoutes)
 
         app.listen(port, () => {
             console.log(`Server running on port: ${port}`);
