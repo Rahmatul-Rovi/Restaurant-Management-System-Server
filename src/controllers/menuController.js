@@ -1,7 +1,7 @@
 const { getDb } = require('../config/db');
 const { ObjectId } = require('mongodb');
 
-// ১. নতুন আইটেম যোগ করা
+// Add New Item
 const addMenuItem = async (req, res) => {
     try {
         const db = getDb();
@@ -14,7 +14,7 @@ const addMenuItem = async (req, res) => {
 
         const newItem = req.body;
 
-        // ✅ Validation
+        //  Validation
         if (!newItem.name || !newItem.price || !newItem.category) {
             return res.status(400).json({ message: "সব ফিল্ড দিতে হবে (name, price, category)" });
         }
@@ -33,7 +33,7 @@ const addMenuItem = async (req, res) => {
     }
 };
 
-// ২. সব মেনু ডাটা দেখানো
+// All Menu Data
 const getMenu = async (req, res) => {
     try {
         const db = getDb();
@@ -50,7 +50,7 @@ const getMenu = async (req, res) => {
     }
 };
 
-// ৩. পপুলার মেনু
+// Popular Menu
 const getPopularMenu = async (req, res) => {
     try {
         const db = getDb();
@@ -58,7 +58,7 @@ const getPopularMenu = async (req, res) => {
 
         const menuCollection = db.collection('menu');
 
-        // ✅ improved query
+        // improved query
         const query = {
             category: { $regex: "biryani|fish", $options: "i" }
         };
