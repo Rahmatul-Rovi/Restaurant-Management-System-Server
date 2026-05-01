@@ -1,7 +1,7 @@
 const { getDb } = require('../config/db');
 const { ObjectId } = require('mongodb');
 
-// ১. নতুন ইউজার সেভ করা
+// New User Save
 const saveUser = async (req, res) => {
     try {
         const db = getDb();
@@ -20,7 +20,7 @@ const saveUser = async (req, res) => {
         const existingUser = await userCollection.findOne(query);
 
         if (existingUser) {
-            // ✅ Already exists হলেও photoURL update করো (Google pic sync)
+            // ✅ Already exists though photoURL update  (Google pic sync)
             await userCollection.updateOne(query, {
                 $set: {
                     photoURL: user.photoURL || user.image || existingUser.photoURL || ""
@@ -32,7 +32,7 @@ const saveUser = async (req, res) => {
         const newUser = {
             name: user.name,
             email: user.email,
-            photoURL: user.photoURL || user.image || "", // ✅ Google photoURL
+            photoURL: user.photoURL || user.image || "", //  Google photoURL
             role: 'user',
             createdAt: new Date()
         };
@@ -46,7 +46,7 @@ const saveUser = async (req, res) => {
     }
 };
 
-// ২. সব ইউজার দেখা
+// Show All users
 const getAllUsers = async (req, res) => {
     try {
         const db = getDb();
@@ -57,7 +57,7 @@ const getAllUsers = async (req, res) => {
     }
 };
 
-// ৩. Admin বানানো
+// Make Admin
 const makeAdmin = async (req, res) => {
     try {
         const db = getDb();
@@ -78,7 +78,7 @@ const makeAdmin = async (req, res) => {
     }
 };
 
-// ৪. ইউজার ডিলিট
+// Delete User
 const deleteUser = async (req, res) => {
     try {
         const db = getDb();
@@ -96,7 +96,7 @@ const deleteUser = async (req, res) => {
     }
 };
 
-// ৫. Email দিয়ে ইউজার খোঁজা
+// User find with email
 const getUserByEmail = async (req, res) => {
     try {
         const db = getDb();
@@ -119,7 +119,7 @@ const getUserByEmail = async (req, res) => {
     }
 };
 
-// ৬. Profile Update
+//  Profile Update
 const updateUserProfile = async (req, res) => {
     try {
         const db = getDb();
