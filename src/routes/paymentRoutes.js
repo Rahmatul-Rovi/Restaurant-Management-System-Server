@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { initiatePayment, paymentSuccess } = require('../controllers/paymentController');
+const { initiatePayment, saveOrderData } = require('../controllers/paymentController');
 
-// এখন এই initiatePayment ফাংশনটি খুঁজে পাবে
+// ১. পেমেন্ট ইন্টেন্ট তৈরি করা (Stripe Client Secret পাওয়ার জন্য)
 router.post('/order', initiatePayment);
 
-// Stripe এর জন্য এটা আপাতত না রাখলেও চলে, তাও থাকলো এরর এড়াতে
-router.post('/payment/success/:tranId', paymentSuccess);
+// ২. পেমেন্ট সাকসেস হওয়ার পর নাম, ঠিকানা ও ট্রানজেকশন আইডি সেভ করা
+router.post('/save-order', saveOrderData);
 
 module.exports = router;
