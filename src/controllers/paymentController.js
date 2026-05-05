@@ -50,4 +50,29 @@ const getUserOrders = async (req, res, db) => {
     }
 };
 
-module.exports = { initiatePayment, saveOrderData, getUserOrders };
+const getAllOrders = async (req, res, db) => {
+    try {
+        const ordersCollection = db.collection("orders");
+        const result = await ordersCollection.find().toArray();
+        res.send(result);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+// অর্ডারের স্ট্যাটাস আপডেট করার জন্য (Pending -> Shipped/Confirmed)
+const updateOrderStatus = async (req, res, db) => {
+    try {
+        const id = req.params.id;
+        const { status } = req.body;
+        const ordersCollection = db.collection("orders");
+        const filter = { _id: new ObjectId(id) };
+        const updateDoc = { $set: { status: status } };
+        const result = await ordersCollection.updateOne(filter, updateDoc);
+        res.send(result);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+module.exports = { initiatePayment, saveOrderData, getUserOrders, updateOrderStatus, getAllOrders };
