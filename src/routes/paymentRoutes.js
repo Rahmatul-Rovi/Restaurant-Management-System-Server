@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { initiatePayment, saveOrderData } = require('../controllers/paymentController');
+const { initiatePayment, saveOrderData, getUserOrders } = require('../controllers/paymentController');
 
-// ১. পেমেন্ট ইন্টেন্ট তৈরি করা (Stripe Client Secret পাওয়ার জন্য)
-router.post('/order', initiatePayment);
+const paymentRoutes = (app, db) => {
+    app.post('/api/order', initiatePayment);
+    app.post('/api/save-order', (req, res) => saveOrderData(req, res, db));
+    app.get('/api/user-orders', (req, res) => getUserOrders(req, res, db));
+};
 
-// ২. পেমেন্ট সাকসেস হওয়ার পর নাম, ঠিকানা ও ট্রানজেকশন আইডি সেভ করা
-router.post('/save-order', saveOrderData);
-
-module.exports = router;
+module.exports = paymentRoutes;

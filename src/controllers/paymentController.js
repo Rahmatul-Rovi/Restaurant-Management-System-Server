@@ -1,6 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { ObjectId } = require('mongodb');
 
-// পেমেন্ট শুরু করার ফাংশন
+// ১. পেমেন্ট শুরু করার ফাংশন
 const initiatePayment = async (req, res) => {
     const { price } = req.body;
     const amount = Math.round(price * 100); 
@@ -17,19 +18,36 @@ const initiatePayment = async (req, res) => {
     }
 };
 
-// পেমেন্ট সাকসেস হওয়ার পর ডাটাবেজে সেভ করার ফাংশন
-const saveOrderData = async (req, res) => {
+// ২. অর্ডার সেভ করা এবং ৩. কার্ট ক্লিয়ার করা ও ৪. হিস্টোরি দেখানো
+const saveOrderData = async (req, res, db) => {
     try {
-        const orderInfo = req.body; // ফ্রন্টএন্ড থেকে আসা নাম, ঠিকানা, ট্রানজেকশন আইডি
+        const orderInfo = req.body;
+        const ordersCollection = db.collection("orders");
+        const cartCollection = db.collection("carts");
+
+        // ডাটাবেজে অর্ডার সেভ
+        const result = await ordersCollection.insertOne(orderInfo);
         
-        // আপনার ডাটাবেজ কানেকশন অনুযায়ী এখানে সেভ করবেন
-        // উদাহরণ: const result = await orderCollection.insertOne(orderInfo);
-        
-        console.log("Order Received:", orderInfo);
-        res.send({ success: true, message: "Order saved successfully!" });
+        // অর্ডার সফল হলে ইউজারের কার্ট খালি করে দেওয়া
+        if (result.insertedId) {
+            await cartCollection.deleteMany({ email: orderInfo.email });
+        }
+
+        res.send({ success: true, insertedId: result.insertedId });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
 };
 
-module.exports = { initiatePayment, saveOrderData };
+const getUserOrders = async (req, res, db) => {
+    try {
+        const email = req.query.email;
+        const ordersCollection = db.collection("orders");
+        const result = await ordersCollection.find({ email: email }).toArray();
+        res.send(result);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+module.exports = { initiatePayment, saveOrderData, getUserOrders };

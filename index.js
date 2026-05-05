@@ -31,7 +31,7 @@ async function startServer() {
 
         app.use('/users', userRoutes);
 
-        app.use('/api', paymentRoutes)
+       paymentRoutes(app, db);
 
         app.listen(port, () => {
             console.log(`Server running on port: ${port}`);
