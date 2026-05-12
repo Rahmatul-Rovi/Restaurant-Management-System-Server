@@ -12,26 +12,26 @@ const {
 
 const menuRoutes = () => {
 
-    const router = express.Router(); // ✅ ভিতরে নিতে হবে
+    const router = express.Router();
 
-    // ✅ Add Item
+    // Add Item
     router.post('/', addMenuItem);
 
-    // ✅ Search আগে রাখতে হবে
+    // Search first the search 
     router.get('/search', searchMenu);
 
-    // ✅ Popular route
+    // Popular route
     router.get('/popular', getPopularMenu);
 
-    // ✅ All menu
+    // All menu
     router.get('/', getMenu);
 
-    // ✅ Delete
+    // Delete
     router.delete('/:id', deleteMenuItem);
 
     router.patch('/:id', updateMenuItem);
 
-    // ⚠️ Dynamic route সবশেষে
+    // Lastly Dynamic route 
     router.get('/:category', getMenuByCategory);
 
     return router;
