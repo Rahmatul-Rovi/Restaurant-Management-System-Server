@@ -16,7 +16,7 @@ const addMenuItem = async (req, res) => {
 
         //  Validation
         if (!newItem.name || !newItem.price || !newItem.category) {
-            return res.status(400).json({ message: "সব ফিল্ড দিতে হবে (name, price, category)" });
+            return res.status(400).json({ message: "Fill All the Field (name, price, category)" });
         }
 
         const result = await menuCollection.insertOne(newItem);
@@ -28,7 +28,7 @@ const addMenuItem = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("ADD MENU ERROR:", error); // 🔥 important
+        console.error("ADD MENU ERROR:", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
@@ -58,7 +58,6 @@ const getPopularMenu = async (req, res) => {
 
         const menuCollection = db.collection('menu');
 
-        // improved query
         const query = {
             category: { $regex: "biryani|fish", $options: "i" }
         };
@@ -73,7 +72,7 @@ const getPopularMenu = async (req, res) => {
     }
 };
 
-// ৪. ক্যাটাগরি অনুযায়ী ডাটা
+// Data with Category
 const getMenuByCategory = async (req, res) => {
     try {
         const db = getDb();
@@ -96,7 +95,7 @@ const getMenuByCategory = async (req, res) => {
     }
 };
 
-// ৫. সার্চ ফাংশন
+// Search Function
 const searchMenu = async (req, res) => {
     try {
         const db = getDb();
@@ -123,7 +122,7 @@ const searchMenu = async (req, res) => {
     }
 };
 
-// ৬. ডিলিট ফাংশন
+// Delete Function
 const deleteMenuItem = async (req, res) => {
     try {
         const db = getDb();
@@ -132,7 +131,7 @@ const deleteMenuItem = async (req, res) => {
         const menuCollection = db.collection('menu');
         const id = req.params.id;
 
-        // ✅ safe ObjectId
+        // safe ObjectId
         if (!ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Invalid ID" });
         }

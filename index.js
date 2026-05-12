@@ -13,16 +13,13 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Main Function to Start Server
 async function startServer() {
     const db = await connectDB(); 
 
     if (db) {
-        // Routes Setup
-        //MenuRoutes
+      
         app.use('/menu', menuRoutes());
-        //CartRoutes
-       // app.use('/cart', cartRoutes(db));
+   
        cartRoutes(app,db);
 
         app.get('/', (req, res) => {

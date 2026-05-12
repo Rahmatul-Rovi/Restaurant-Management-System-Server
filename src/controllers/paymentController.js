@@ -1,7 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { ObjectId } = require('mongodb');
 
-// ১. পেমেন্ট শুরু করার ফাংশন
+// Staring payment Function
 const initiatePayment = async (req, res) => {
     const { price } = req.body;
     const amount = Math.round(price * 100); 
@@ -18,7 +18,7 @@ const initiatePayment = async (req, res) => {
     }
 };
 
-// ২. অর্ডার সেভ করা এবং ৩. কার্ট ক্লিয়ার করা ও ৪. হিস্টোরি দেখানো
+// Order Save & Cart Clear &  Showing History
 const saveOrderData = async (req, res, db) => {
     try {
         const orderInfo = req.body;
