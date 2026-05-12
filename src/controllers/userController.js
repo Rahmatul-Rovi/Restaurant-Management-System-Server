@@ -20,7 +20,7 @@ const saveUser = async (req, res) => {
         const existingUser = await userCollection.findOne(query);
 
         if (existingUser) {
-            // ✅ Already exists though photoURL update  (Google pic sync)
+            //  Already exists though photoURL update  (Google pic sync)
             await userCollection.updateOne(query, {
                 $set: {
                     photoURL: user.photoURL || user.image || existingUser.photoURL || ""

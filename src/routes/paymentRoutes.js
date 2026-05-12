@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-// ✅ সব function import করো
 const { initiatePayment, saveOrderData, getUserOrders, getAllOrders, updateOrderStatus } = require('../controllers/paymentController');
 
 const paymentRoutes = (app, db) => {

@@ -25,10 +25,10 @@ const saveOrderData = async (req, res, db) => {
         const ordersCollection = db.collection("orders");
         const cartCollection = db.collection("carts");
 
-        // ডাটাবেজে অর্ডার সেভ
+        // Database Order Save
         const result = await ordersCollection.insertOne(orderInfo);
         
-        // অর্ডার সফল হলে ইউজারের কার্ট খালি করে দেওয়া
+        // User Cart Empty after successfully Checkout
         if (result.insertedId) {
             await cartCollection.deleteMany({ email: orderInfo.email });
         }
@@ -60,7 +60,7 @@ const getAllOrders = async (req, res, db) => {
     }
 };
 
-// অর্ডারের স্ট্যাটাস আপডেট করার জন্য (Pending -> Shipped/Confirmed)
+// Order Database Update (Pending -> Shipped/Confirmed)
 const updateOrderStatus = async (req, res, db) => {
     try {
         const id = req.params.id;
